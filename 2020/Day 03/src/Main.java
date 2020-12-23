@@ -3,58 +3,74 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static String filepath = "C:/Users/David Dunkel/IdeaProjects/Advent of Code/2020/Day 03/src/input.txt";
+    public static final String filepath = "C:/Users/David Dunkel/IdeaProjects/Advent of Code/2020/Day 03/src/input.txt";
 
     public static void main(String[] args) throws IOException {
-        int rows = getRows();
-        int columns = getCols();
+        long rows = getRows();
+        long columns = getColumns();
 
         char[][] map = popMap(rows, columns);
 
-        System.out.println("\n The number of trees hit in pt.1: " + traverse(map, rows, columns, 3, 1));
-        System.out.println("\n The solution to pt.2: " + partTwo(map, rows, columns));
+        System.out.println("The number of trees hit in pt.1: " + traverse(map, rows, columns, 3, 1));
+        System.out.println("The solution to pt.2: " + partTwo(map, rows, columns));
     }
 
-    private static int getRows() throws IOException {
-        BufferedReader br_size = new BufferedReader(new FileReader(filepath));
-        int rows = 0;
-        while (br_size.readLine() != null) rows++;
-        br_size.close();
+    private static long getRows() throws IOException {
+        final FileReader fileReader = new FileReader(filepath);
+        final BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+        long rows = 0;
+
+        while (bufferedReader.readLine() != null)
+            rows++;
+
+        bufferedReader.close();
+
         return rows;
     }
 
-    private static int getCols() throws FileNotFoundException {
-        Scanner s = new Scanner(new File(filepath));
-        int columns = 0;
-        columns = s.next().length();
-        s.close();
+    private static long getColumns() throws FileNotFoundException {
+        final File file = new File(filepath);
+        final Scanner scanner = new Scanner(file);
+
+        long columns = scanner.next().length();
+
+        scanner.close();
+
         return columns;
     }
 
-    private static char[][] popMap(int rows, int cols) throws FileNotFoundException {
-        char[][] map = new char[rows][cols];
-        Scanner s = new Scanner(new File(filepath));
+    private static char[][] popMap(final long rows, final long cols) throws FileNotFoundException {
+        final char[][] map = new char[Math.toIntExact(rows)][Math.toIntExact(cols)];
+        final Scanner scanner = new Scanner(new File(filepath));
 
         int row_count = 0;
-        String str = "";
-        while (s.hasNextLine()) {
-            str = s.nextLine();
-            for (int i = 0; i < cols; i++) {
-                map[row_count][i] = str.charAt(i);
-            }
+        String string;
+
+        while (scanner.hasNextLine()) {
+            string = scanner.nextLine();
+            for (int i = 0; i < cols; i++)
+                map[row_count][i] = string.charAt(i);
+
             row_count++;
         }
-        s.close();
+
+        scanner.close();
+
         return map;
     }
 
-    private static int partTwo(char[][] map, int rows, int cols) {
-        int sol = 0;
-        sol = traverse(map, rows, cols, 1, 1) * traverse(map, rows, cols, 3, 1) * traverse(map, rows, cols, 5, 1) * traverse(map, rows, cols, 7, 1) * traverse(map, rows, cols, 1, 2);
+    private static long partTwo(char[][] map, long rows, long columns) {
+        long sol = 0;
+        sol = traverse(map, rows, columns, 1, 1)
+                * traverse(map, rows, columns, 3, 1)
+                * traverse(map, rows, columns, 5, 1)
+                * traverse(map, rows, columns, 7, 1)
+                * traverse(map, rows, columns, 1, 2);
         return sol;
     }
 
-    private static int traverse(char[][] map, int rows, int cols, int right, int down) {
+    private static long traverse(char[][] map, long rows, long columns, long right, long down) {
         int trees = 0;
         int cur_row = 0;
         int cur_col = 0;
@@ -65,8 +81,8 @@ public class Main {
                 trees++;
 
             cur_row += down;
-            if ((cur_col + right) >= cols)
-                cur_col = ((cur_col + right) % cols);
+            if ((cur_col + right) >= columns)
+                cur_col = Math.toIntExact(((cur_col + right) % columns));
             else
                 cur_col += right;
         }
@@ -74,7 +90,7 @@ public class Main {
     }
 
     // For validating input
-    private static void printInput(char[][] map, int rows, int cols) {
+    private static void printInput(char[][] map, long rows, long cols) {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++)
                 System.out.print(map[i][j]);
