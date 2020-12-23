@@ -21,6 +21,7 @@ public class Main {
             final int min = newPassword.getMin();
             final int max = newPassword.getMax();
             final char letter = newPassword.getLetter();
+
             final String password = newPassword.getPassword();
 
             // PART 1: Test with first password policy
@@ -40,38 +41,5 @@ public class Main {
 
         System.out.println(partOneValid);
         System.out.println(partTwoValid);
-    }
-
-    private static class Password {
-        private final int min;
-        private final int max;
-        private final char letter;
-        private final String password;
-
-        Password(String line) {
-            int dashEnd = line.indexOf("-");
-            int spaceEnd = line.indexOf(" ");
-
-            min = Integer.parseInt(line.substring(0, dashEnd));
-            max = Integer.parseInt(line.substring(dashEnd + 1, spaceEnd));
-            letter = line.substring(spaceEnd + 1, spaceEnd + 2).charAt(0);
-            password = line.substring(spaceEnd + 4);
-        }
-
-        public int getMin() {
-            return min;
-        }
-
-        public int getMax() {
-            return max;
-        }
-
-        public char getLetter() {
-            return letter;
-        }
-
-        public String getPassword() {
-            return password;
-        }
     }
 }
