@@ -1,3 +1,5 @@
+package de.dealexlp;
+
 import java.io.*;
 import java.util.Scanner;
 

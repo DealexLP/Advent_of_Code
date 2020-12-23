@@ -1,3 +1,5 @@
+package de.dealexlp;
+
 public class Password {
 
     private final int min;
