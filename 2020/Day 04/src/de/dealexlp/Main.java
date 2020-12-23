@@ -4,64 +4,70 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
         final File file = new File("C:/Users/David Dunkel/IdeaProjects/Advent of Code/2020/Day 04/src/input.txt");
+        final Scanner scanner = new Scanner(file);
         final List<String> passports = new ArrayList<>();
 
-        Scanner scanner = new Scanner(file);
-        StringBuilder stringBuilder = new StringBuilder();
+        String passport = "";
 
         while (scanner.hasNextLine()) {
-            String nextLine = scanner.nextLine();
-            if (nextLine.length() != 0) {
-                stringBuilder.append(nextLine);
-                stringBuilder.append(' ');
+            String line = scanner.nextLine();
+            if (line.equals("")) {
+                passports.add(passport);
+                passport = "";
             } else {
-                passports.add(stringBuilder.toString());
-                stringBuilder = new StringBuilder();
+                passport += " " + line;
+            }
+        }
+        passports.add(passport); // adds in last passport found
+
+        int legal = 0; // contains 7 fields (excluding cid)
+        int valid = 0; // contains 7 fields AND each field meets requirements
+
+        for (String pp : passports) {
+            if (isLegal(pp)) {
+                legal++;
+            }
+            if (isLegal(pp) && isValid(pp)) {
+                valid++;
             }
         }
 
-        passports.add(stringBuilder.toString());
+        System.out.println("part 1: " + legal); // part 1
+        System.out.println("part 2: " + valid); // part 2
 
-        scanner.close();
-
-        long validPassports = 0;
-
-        for (int i = 0; i < passports.size(); i++) {
-            scanner = new Scanner(passports.get(i));
-
-            int ids = 0;
-
-            while (scanner.hasNext())
-                if (checkSingleID(scanner.next().split(":")))
-                    ids++;
-
-            if (ids == 7)
-                validPassports++;
-
-            scanner.close();
-        }
-
-        System.out.println(validPassports + " valid passports");
     }
 
-    private static boolean checkSingleID(final String[] id) {
-        final String IDType = id[0];
+    private static boolean isValid(final String input) {
+        final String[] split = input.split(" ");
 
-        return switch (IDType) {
-            case "byr" -> Pattern.matches("(19[2-9]\\d)|(200[012])", id[1]);
-            case "iyr" -> Pattern.matches("20(1\\d)|(20)", id[1]);
-            case "eyr" -> Pattern.matches("20(2\\d)|(30)", id[1]);
-            case "hgt" -> Pattern.matches("(1([5-8]\\d|9[0-3])cm)|(59|6\\d|7[0-6]in)", id[1]);
-            case "hcl" -> Pattern.matches("#\\p{XDigit}{6}", id[1]);
-            case "ecl" -> Pattern.matches("amb|blu|brn|gry|grn|hzl|oth", id[1]);
-            case "pid" -> Pattern.matches("\\d{9}", id[1]);
-            default -> false;
-        };
+        for (String s : split) {
+            if (s.startsWith("byr:") && !s.replace("byr:", "").matches("19[2-9][0-9]|200[0-2]")) {
+                return false;
+            } else if (s.startsWith("iyr") && !s.replace("iyr:", "").matches("201[0-9]|2020")) {
+                return false;
+            } else if (s.startsWith("eyr:") && !s.replace("eyr:", "").matches("202[0-9]|2030")) {
+                return false;
+            } else if (s.startsWith("hgt:") && !s.replace("hgt:", "").matches("1[5-8][0-9]cm|19[0-3]cm|59in|6[0-9]in|7[0-6]in")) {
+                return false;
+            } else if (s.startsWith("hcl:") && !s.replace("hcl:", "").matches("#[0-9a-f]{6}")) {
+                return false;
+            } else if (s.startsWith("ecl:") && !s.replace("ecl:", "").matches("amb|blu|brn|gry|grn|hzl|oth")) {
+                return false;
+            } else if (s.startsWith("pid:") && !s.replace("pid:", "").matches("[0-9]{9}")) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isLegal(final String input) {
+        return input.contains("byr:") && input.contains("iyr:") && input.contains("eyr:") && input.contains("hgt:")
+                && input.contains("hcl:") && input.contains("ecl:") && input.contains("pid:");
     }
 }
